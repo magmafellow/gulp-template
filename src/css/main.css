@@ -1,0 +1,14 @@
+body {
+  background: #fafafa;
+  display: flex;
+  align-items: center;
+  opacity: 0.7;
+  color: goldenrod;
+}
+
+a {
+  color: red;
+}
+a {
+  display: inline;
+}

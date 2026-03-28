@@ -1,18 +1,26 @@
-const { series } = require('gulp');
+const { series, src, dest, parallel } = require('gulp')
+const fs = require('fs')
 
-// The `clean` function is not exported so it can be considered a private task.
-// It can still be used within the `series()` composition.
-function clean(cb) {
-  // body omitted
-  cb();
+const postcss = require('gulp-postcss')
+const autoprefixer = require('autoprefixer')
+const cssnano = require('cssnano')
+const postcssMergeRules = require('postcss-merge-rules')
+
+function removeDist(cb) {
+  fs.rmSync('./dist', { recursive: true, force: true })
+  console.log('-- removed dist folder')
+  cb()
 }
 
-// The `build` function is exported so it is public and can be run with the `gulp` command.
-// It can also be used within the `series()` composition.
-function build(cb) {
-  // body omitted
-  cb();
+function css(cb) {
+  const plugins = [
+    autoprefixer(),
+    cssnano(),
+    // postcssMergeRules(),  // this task is already done by cssnano
+  ]
+  return src('./src/**/*.css').pipe(postcss(plugins)).pipe(dest('./dist'))
 }
 
-exports.build = build;
-exports.default = series(clean, build);
+exports.removeDist = removeDist
+exports.css = css
+exports.default = css
