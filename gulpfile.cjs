@@ -36,7 +36,7 @@ function js(cb) {
 
 const inputOptions = {
   input: './dist/js/main.js',
-  plugins: [commonjs()],
+  // plugins: [commonjs()],
 }
 const outputOptionsList = [
   {
