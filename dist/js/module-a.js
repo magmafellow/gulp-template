@@ -1,0 +1,2 @@
+export var name = 'Alex';
+//# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibW9kdWxlLWEuanMiLCJuYW1lcyI6WyJuYW1lIl0sInNvdXJjZXMiOlsibW9kdWxlLWEuanMiXSwic291cmNlc0NvbnRlbnQiOlsiZXhwb3J0IGNvbnN0IG5hbWUgPSAnQWxleCciXSwibWFwcGluZ3MiOiJBQUFBLE9BQU8sSUFBTUEsSUFBSSxHQUFHLE1BQU0iLCJpZ25vcmVMaXN0IjpbXX0=
