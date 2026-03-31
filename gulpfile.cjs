@@ -11,6 +11,11 @@ const commonjs = require('@rollup/plugin-commonjs')
 const autoprefixer = require('autoprefixer')
 const cssnano = require('cssnano')
 const terser = require('@rollup/plugin-terser')
+const dartSass = require('sass')
+const _gulpSass = require('gulp-sass')
+const gulpSass = _gulpSass(dartSass)
+const gulpIf = require('gulp-if')
+const gulpRename = require('gulp-rename')
 
 const gulpPug = require('gulp-pug')
 
@@ -29,6 +34,63 @@ function pug2html() {
 function css(cb) {
   const plugins = [autoprefixer(), cssnano()]
   return src('./src/**/*.css').pipe(gulpPostcss(plugins)).pipe(dest('./dist'))
+}
+
+// function scss2css(cb) {
+//   const plugins = [autoprefixer(), cssnano()]
+
+//   return src('./src/scss/*.scss')
+//     .pipe(gulpSourcemaps.init())
+//     .pipe(gulpSass.sync({}))
+//     .on('error', gulpSass.logError)
+//     .pipe(gulpPostcss(plugins))
+//     .pipe(gulpSourcemaps.write('.'))
+//     .pipe(dest('./dist/css'))
+// }
+
+// function scss2css(cb) {
+//   const processed = src('./src/scss/*.scss')
+//     .pipe(gulpSourcemaps.init())
+//     .pipe(gulpSass.sync({}))
+//     .on('error', gulpSass.logError)
+//     .pipe(gulpPostcss([autoprefixer()]))
+
+//   // Unminified branch
+//   const unmin = processed
+//     .pipe(gulpSourcemaps.write('.'))
+//     .pipe(dest('./dist/css'))
+
+//   // Minified branch
+//   const min = processed
+//     .pipe(gulpSourcemaps.write('.'))
+//     .pipe(gulpRename({ suffix: '.min' }))
+//     .pipe(gulpPostcss([cssnano()]))
+//     .pipe(dest('./dist/css'))
+
+//   return merge(unmin, min)
+// }
+
+function scss2css(cb) {
+  // Shared processing: init sourcemaps + compile + prefix (once per file)
+  const common = src('./src/scss/*.scss')
+    .pipe(gulpSourcemaps.init())
+    .pipe(gulpSass.sync({}))
+    .on('error', gulpSass.logError)
+    .pipe(gulpPostcss([autoprefixer()]))
+
+  // Unminified branch: write maps and output
+  const unminified = common
+    .pipe(gulpSourcemaps.write('.'))
+    .pipe(dest('./dist/css'))
+
+  // Minified branch: rename + minify + write maps + output
+  const minified = common
+    .pipe(gulpRename({ suffix: '.min' }))
+    .pipe(gulpPostcss([cssnano()]))
+    .pipe(gulpSourcemaps.write('.'))
+    .pipe(dest('./dist/css'))
+
+  return merge(unminified, minified)
 }
 
 function js(cb) {
@@ -120,7 +182,8 @@ exports.bundleAllJs = series(js, bundleRequiredDependencies, bundleMain)
 exports.bundleRequiredDependenciesJs = series(js, bundleRequiredDependencies)
 exports.bundleMainJs = series(js, bundleMain)
 exports.pug2html = pug2html
-
+exports.scss2css = scss2css
 exports.default = function () {
   watch('./src/js/**/*.js', series(js, bundleMain))
+  watch('./src/scss/**', scss2css)
 }
