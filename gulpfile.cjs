@@ -36,40 +36,6 @@ function css(cb) {
   return src('./src/**/*.css').pipe(gulpPostcss(plugins)).pipe(dest('./dist'))
 }
 
-// function scss2css(cb) {
-//   const plugins = [autoprefixer(), cssnano()]
-
-//   return src('./src/scss/*.scss')
-//     .pipe(gulpSourcemaps.init())
-//     .pipe(gulpSass.sync({}))
-//     .on('error', gulpSass.logError)
-//     .pipe(gulpPostcss(plugins))
-//     .pipe(gulpSourcemaps.write('.'))
-//     .pipe(dest('./dist/css'))
-// }
-
-// function scss2css(cb) {
-//   const processed = src('./src/scss/*.scss')
-//     .pipe(gulpSourcemaps.init())
-//     .pipe(gulpSass.sync({}))
-//     .on('error', gulpSass.logError)
-//     .pipe(gulpPostcss([autoprefixer()]))
-
-//   // Unminified branch
-//   const unmin = processed
-//     .pipe(gulpSourcemaps.write('.'))
-//     .pipe(dest('./dist/css'))
-
-//   // Minified branch
-//   const min = processed
-//     .pipe(gulpSourcemaps.write('.'))
-//     .pipe(gulpRename({ suffix: '.min' }))
-//     .pipe(gulpPostcss([cssnano()]))
-//     .pipe(dest('./dist/css'))
-
-//   return merge(unmin, min)
-// }
-
 function scss2css(cb) {
   // Shared processing: init sourcemaps + compile + prefix (once per file)
   const common = src('./src/scss/*.scss')
