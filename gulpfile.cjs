@@ -2,7 +2,6 @@ const { series, src, dest, parallel, watch } = require('gulp')
 const fs = require('fs')
 
 const gulpSourcemaps = require('gulp-sourcemaps')
-const gulpConcat = require('gulp-concat')
 const gulpBabel = require('gulp-babel')
 const rollup = require('rollup')
 const resolve = require('@rollup/plugin-node-resolve')
@@ -14,11 +13,13 @@ const terser = require('@rollup/plugin-terser')
 const dartSass = require('sass')
 const _gulpSass = require('gulp-sass')
 const gulpSass = _gulpSass(dartSass)
-const gulpIf = require('gulp-if')
 const gulpRename = require('gulp-rename')
 const merge = require('merge-stream')
 
+const siteData = require('./src/pug/data/site-data.cjs')
+
 const gulpPug = require('gulp-pug')
+const { toWebp, toAvif, optimizeOriginals } = require('./image-handling.cjs')
 
 function removeDist(cb) {
   fs.rmSync('./dist', { recursive: true, force: true })
@@ -26,9 +27,12 @@ function removeDist(cb) {
   cb()
 }
 
+const pugOptions = {
+  ...siteData,
+}
 function pug2html() {
   return src(['./src/pug/*.pug', './src/pug/pages/*.pug'])
-    .pipe(gulpPug())
+    .pipe(gulpPug({ locals: pugOptions, pretty: true }))
     .pipe(dest('./dist'))
 }
 
@@ -150,6 +154,10 @@ exports.bundleRequiredDependenciesJs = series(js, bundleRequiredDependencies)
 exports.bundleMainJs = series(js, bundleMain)
 exports.pug2html = pug2html
 exports.scss2css = scss2css
+exports.optimizeImagesOOriginals = optimizeOriginals
+exports.optimizeImagesOWebp = toWebp
+exports.optimizeImagesOAvif = toAvif
+
 exports.default = function () {
   watch('./src/js/**/*.js', series(js, bundleMain))
   watch('./src/scss/**', scss2css)

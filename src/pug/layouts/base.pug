@@ -1,0 +1,25 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+
+    link(rel="icon" href="/assets/icons/favicon.ico")
+    link(rel="stylesheet" href="/css/main.css")
+
+    block script
+      script(src="/js/library-01.js")
+      script(src="/js/main.js")
+
+    block head
+      meta(name="description" content=pageDescription || siteDescription)
+      title= pageTitle || siteName
+
+  body(class=bodyClass || '')
+    block header
+      include ../components/header.pug
+
+    block content
+
+    block footer
+      include ../components/footer.pug
