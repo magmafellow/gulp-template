@@ -1,19 +1,29 @@
-const { series, src, dest, parallel } = require('gulp')
+const { series, src, dest, parallel, watch } = require('gulp')
 const fs = require('fs')
 
 const gulpSourcemaps = require('gulp-sourcemaps')
 const gulpConcat = require('gulp-concat')
 const gulpBabel = require('gulp-babel')
 const rollup = require('rollup')
+const resolve = require('@rollup/plugin-node-resolve')
 const gulpPostcss = require('gulp-postcss')
 const commonjs = require('@rollup/plugin-commonjs')
 const autoprefixer = require('autoprefixer')
 const cssnano = require('cssnano')
+const terser = require('@rollup/plugin-terser')
+
+const gulpPug = require('gulp-pug')
 
 function removeDist(cb) {
   fs.rmSync('./dist', { recursive: true, force: true })
   console.log('-- removed dist folder')
   cb()
+}
+
+function pug2html() {
+  return src(['./src/pug/*.pug', './src/pug/pages/*.pug'])
+    .pipe(gulpPug())
+    .pipe(dest('./dist'))
 }
 
 function css(cb) {
@@ -34,25 +44,39 @@ function js(cb) {
     .pipe(dest('./dist/js'))
 }
 
-const inputOptions = {
-  input: './dist/js/main.js',
-  // plugins: [commonjs()],
+const inputOptionsRequiredDependencies = {
+  input: './dist/js/required-dependencies.js',
+  plugins: [resolve(), commonjs(), terser()],
 }
-const outputOptionsList = [
+const inputOptionsMain = {
+  input: './dist/js/main.js',
+  plugins: [resolve(), commonjs()],
+}
+
+const outputOptionsListMain = [
   {
     file: './dist/js/bundle.js',
-    format: 'module',
+    format: 'esm', // es, module
+  },
+]
+const outputOptionsListRequiredDependencies = [
+  {
+    file: './dist/js/required-dependencies-bundle.js',
+    format: 'esm', // es, module
+    globals: {
+      swiper: 'Swiper',
+    },
   },
 ]
 
-async function build() {
+async function build(rollupOptions, outputOptionsList) {
   let bundle
   let buildFailed = false
   try {
-    bundle = await rollup.rollup(inputOptions)
+    bundle = await rollup.rollup(rollupOptions)
     console.log(bundle.watchFiles)
 
-    await generateOutputs(bundle)
+    await generateOutputs(bundle, outputOptionsList)
   } catch (error) {
     buildFailed = true
     console.error(error)
@@ -63,7 +87,7 @@ async function build() {
   process.exit(buildFailed ? 1 : 0)
 }
 
-async function generateOutputs(bundle) {
+async function generateOutputs(bundle, outputOptionsList) {
   for (const outputOptions of outputOptionsList) {
     const { output } = await bundle.write(outputOptions)
 
@@ -77,8 +101,14 @@ async function generateOutputs(bundle) {
   }
 }
 
-async function bundle(cb) {
-  return await build()
+async function bundleMain(cb) {
+  return await build(inputOptionsMain, outputOptionsListMain)
+}
+async function bundleRequiredDependencies(cb) {
+  return await build(
+    inputOptionsRequiredDependencies,
+    outputOptionsListRequiredDependencies,
+  )
 }
 
 exports.removeDist = removeDist
@@ -86,6 +116,11 @@ exports.clear = removeDist
 
 exports.css = css
 exports.js = js
-exports.bundleJs = series(js, bundle)
-exports.bundle = bundle
-exports.default = css
+exports.bundleAllJs = series(js, bundleRequiredDependencies, bundleMain)
+exports.bundleRequiredDependenciesJs = series(js, bundleRequiredDependencies)
+exports.bundleMainJs = series(js, bundleMain)
+exports.pug2html = pug2html
+
+exports.default = function () {
+  watch('./src/js/**/*.js', series(js, bundleMain))
+}
