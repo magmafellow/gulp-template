@@ -16,6 +16,7 @@ const _gulpSass = require('gulp-sass')
 const gulpSass = _gulpSass(dartSass)
 const gulpIf = require('gulp-if')
 const gulpRename = require('gulp-rename')
+const merge = require('merge-stream')
 
 const gulpPug = require('gulp-pug')
 
@@ -46,15 +47,15 @@ function scss2css(cb) {
 
   // Unminified branch: write maps and output
   const unminified = common
-    .pipe(gulpSourcemaps.write('.'))
+    .pipe(gulpSourcemaps.write())
     .pipe(dest('./dist/css'))
 
   // Minified branch: rename + minify + write maps + output
   const minified = common
     .pipe(gulpRename({ suffix: '.min' }))
     .pipe(gulpPostcss([cssnano()]))
-    .pipe(gulpSourcemaps.write('.'))
-    .pipe(dest('./dist/css'))
+    .pipe(gulpSourcemaps.write())
+    .pipe(dest('./dist/css/min'))
 
   return merge(unminified, minified)
 }
