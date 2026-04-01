@@ -43,6 +43,10 @@ function copyOriginals() {
   return src('./src/images/**/*').pipe(dest('./dist/images'))
 }
 
+function copyOriginalsIcons() {
+  return src('./src/icons/**/*').pipe(dest('./dist/icons'))
+}
+
 function optimizeOriginals() {
   return src('./src/images/**/*.{jpg,jpeg,png}')
     .pipe(
@@ -84,6 +88,7 @@ function toAvif() {
 }
 
 module.exports.copyOriginals = copyOriginals
+module.exports.copyOriginalsIcons = copyOriginalsIcons
 module.exports.optimizeOriginals = optimizeOriginals
 module.exports.toWebp = toWebp
 module.exports.toAvif = toAvif

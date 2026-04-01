@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="/assets/icons/favicon.ico">
+    <link rel="stylesheet" href="/css/min/main.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
+    <script src="https://unpkg.com/tippy.js@6"></script>
+    <script src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js"></script>
+    <script src="https://unpkg.com/micromodal/dist/micromodal.min.js"></script>
+    <script src="/js/library-01.js"></script>
+    <script src="/js/main.js"></script>
+    <meta name="description">
+    <title>Alex Web Foundation</title>
+  </head>
+  <body class="body-main">
+    <header>my-header</header><!-- [1] -->
+<div id="modal-1" aria-hidden="true">
+<!-- [2] -->
+<div tabindex="-1" data-micromodal-close>
+<!-- [3] -->
+<div role="dialog" aria-modal="true" aria-labelledby="modal-1-title" >
+<header>
+<h2 id="modal-1-title">
+    <Modal>Title</Modal></h2>
+<!-- [4] -->
+<button aria-label="Close modal" data-micromodal-close></button>
+</header>
+<div id="modal-1-content">
+    <Modal>Content</Modal></div>
+</div>
+</div>
+</div>
+    <footer>my-footer</footer>
+  </body>
+</html>

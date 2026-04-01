@@ -1,3 +1,5 @@
+//- include ../components/example_dialog.pug
+
 doctype html
 html(lang="en")
   head
@@ -5,7 +7,23 @@ html(lang="en")
     meta(name="viewport" content="width=device-width, initial-scale=1")
 
     link(rel="icon" href="/assets/icons/favicon.ico")
-    link(rel="stylesheet" href="/css/main.css")
+    link(rel="stylesheet" href="/css/min/main.min.css")
+
+    block libraries
+      //- Swiper (carousel)
+      link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css")
+      script(src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js")
+    
+      //- Tippy (popovers, tooltips)
+      script(src="https://unpkg.com/@popperjs/core@2")
+      script(src="https://unpkg.com/tippy.js@6")
+    
+      //- Just Validate (form validation, zero-dependency)
+      script(src="https://unpkg.com/just-validate@latest/dist/just-validate.production.min.js")
+
+      //- MicroModal (modal/dialogs)
+      script(src="https://unpkg.com/micromodal/dist/micromodal.min.js")
+    
 
     block script
       script(src="/js/library-01.js")
@@ -20,6 +38,9 @@ html(lang="en")
       include ../components/header.pug
 
     block content
+
+    block dialogs
+      include ../components/example_dialog.pug
 
     block footer
       include ../components/footer.pug

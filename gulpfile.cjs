@@ -19,7 +19,12 @@ const merge = require('merge-stream')
 const siteData = require('./src/pug/data/site-data.cjs')
 
 const gulpPug = require('gulp-pug')
-const { toWebp, toAvif, optimizeOriginals } = require('./image-handling.cjs')
+const {
+  toWebp,
+  toAvif,
+  optimizeOriginals,
+  copyOriginalsIcons,
+} = require('./image-handling.cjs')
 
 function removeDist(cb) {
   fs.rmSync('./dist', { recursive: true, force: true })
@@ -126,9 +131,9 @@ async function generateOutputs(bundle, outputOptionsList) {
 
     for (const chunkOrAsset of output) {
       if (chunkOrAsset.type === 'asset') {
-        console.log('Asset', chunkOrAsset)
+        // console.log('Asset', chunkOrAsset)
       } else {
-        console.log('Chunk', chunkOrAsset.modules)
+        // console.log('Chunk', chunkOrAsset.modules)
       }
     }
   }
@@ -154,11 +159,15 @@ exports.bundleRequiredDependenciesJs = series(js, bundleRequiredDependencies)
 exports.bundleMainJs = series(js, bundleMain)
 exports.pug2html = pug2html
 exports.scss2css = scss2css
+exports.copyIcons = copyOriginalsIcons
 exports.optimizeImagesOOriginals = optimizeOriginals
 exports.optimizeImagesOWebp = toWebp
 exports.optimizeImagesOAvif = toAvif
 
 exports.default = function () {
-  watch('./src/js/**/*.js', series(js, bundleMain))
-  watch('./src/scss/**', scss2css)
+  watch('./src/js/**/*.js', { ignoreInitial: false }, series(js, bundleMain))
+  watch('./src/scss/**', { ignoreInitial: false }, scss2css)
+  watch('./src/pug/**/*.*', { ignoreInitial: false }, pug2html)
+  watch('./src/icons/**/*.*', { ignoreInitial: false }, copyOriginalsIcons)
+  watch('./src/images/**/*.*', { ignoreInitial: false }, toWebp)
 }
